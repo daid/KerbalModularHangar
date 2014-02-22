@@ -1,6 +1,6 @@
 <?php
-mysql_connect("localhost", "kerbal", "kerbal");
-mysql_select_db("kerbal");
+mysql_connect("localhost", "kerbal", "kerbal") || die();
+mysql_select_db("kerbal") || die();
 function e($s) {return "'".mysql_real_escape_string($s)."'";}
 
 function db_insert($query)

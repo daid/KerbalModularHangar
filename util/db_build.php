@@ -14,6 +14,10 @@ function typeToMysqlType($type)
 		return "VARCHAR(255)";
 	case "TEXT":
 		return "TEXT";
+	case "INT":
+		return "INT(11)";
+	case "FLOAT":
+		return "DOUBLE";
 	default:
 		die("Unknown column type: $type");
 	}

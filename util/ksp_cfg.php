@@ -16,11 +16,27 @@ function parse_cfg($filename)
 		
 		if (strlen($line) < 1)
 			continue;
+		if (substr($line, 0, 3) == "\xEF\xBB\xBF")//Strip UTF-8 byte order mark.
+			$line = substr($line, 3);
+		if (substr($line, strlen($line) - 1) == '{')
+		{
+			$pre = trim(substr($line, 0, strlen($line) - 1));
+			if (strlen($pre) > 0)
+				$lastLine = $pre;
+			$line = '{';
+		}
+		
 		if (strpos($line, "=") !== false)
 		{
 			$key = trim(substr($line, 0, strpos($line, "=")));
 			$value = trim(substr($line, strpos($line, "=")+1));
-			$obj->data[$key] = $value;
+			if ($obj === false)
+			{
+				if ($key != "proxy")
+					echo "Data outside of object...\n".$filename."\n";
+			}else{
+				$obj->data[$key] = $value;
+			}
 		}else if ($line == "{")
 		{
 			$newobj = new stdClass();
@@ -35,9 +51,12 @@ function parse_cfg($filename)
 				$obj->childs[] = $newobj;
 			}
 			$obj = $newobj;
-		}else if ($line == "{")
+		}else if ($line == "}")
 		{
-			$obj = $obj->parent;
+			if ($obj === false)
+				echo "Close object with no object open...\n".$filename."\n";
+			else
+				$obj = $obj->parent;
 		}else{
 			$lastLine = $line;
 		}
@@ -45,6 +64,4 @@ function parse_cfg($filename)
 	fclose($fd);
 	return $ret;
 }
-
-var_dump(parse_cfg("C:/KSP_win/GameData/Squad/Parts/Aero/advancedCanard/part.cfg"));
 ?>
