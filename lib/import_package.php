@@ -22,7 +22,26 @@ function import_package($path, $packageName)
 				_import_object_definition($id, $filename, $obj);
 			}
 		}
+		else if ($ext == '.dll')
+		{
+			$plugin = db_query("SELECT * FROM Plugin WHERE Package = ".e($id)." AND Filename = ".e($filename));
+			if (count($plugin) < 1)
+			{
+				$pluginId = db_insert("INSERT INTO Plugin(Package, Filename) VALUES (".e($id).", ".e($filename).");");
+				foreach(explode("\n", shell_exec("Analizer.exe \"".$path.$filename."\"")) as $partModule)
+				{
+					$partModule = trim($partModule);
+					if (strlen($partModule) < 1)
+						continue;
+					db_insert("INSERT INTO PluginPartModule(Plugin, Name) VALUES (".e($pluginId).", ".e($partModule).");");
+				}
+			}
+		}
 		else if ($ext == '.mu') {}	//Model
+		else if ($ext == '.mdl') {}	//Model
+		else if ($ext == '.msh') {}	//Model
+		else if ($ext == '.v4') {}	//Model
+		else if ($ext == '.dae') {}	//Model
 		else if ($ext == '.mbm') {}	//Texture
 		else if ($ext == '.png') {}	//Texture
 		else if ($ext == '.tga') {}	//Texture
@@ -94,6 +113,4 @@ function _import_resource_definition($package, $filename, $resource)
 		return;
 	$partid = db_insert("INSERT INTO Resource(Package, Name, Density) VALUES (".e($package).", ".e($resource->data['name']).", ".e($resource->data['density']).");");
 }
-
-import_package("C:/KSP_win/GameData/Squad/", "Squad");
 ?>

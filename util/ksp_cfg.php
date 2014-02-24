@@ -32,8 +32,8 @@ function parse_cfg($filename)
 			$value = trim(substr($line, strpos($line, "=")+1));
 			if ($obj === false)
 			{
-				if ($key != "proxy")
-					echo "Data outside of object...\n".$filename."\n";
+				//if ($key != "proxy")
+				//	echo "Data outside of object...\n".$filename."\n";
 			}else{
 				$obj->data[$key] = $value;
 			}
@@ -54,7 +54,7 @@ function parse_cfg($filename)
 		}else if ($line == "}")
 		{
 			if ($obj === false)
-				echo "Close object with no object open...\n".$filename."\n";
+				echo "Warning: Close object with no object open...\n".$filename."\n";
 			else
 				$obj = $obj->parent;
 		}else{
