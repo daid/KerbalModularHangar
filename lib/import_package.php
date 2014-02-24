@@ -17,7 +17,7 @@ function import_package($path, $packageName)
 		if ($ext == '.cfg')
 		{
 			$cfg = parse_cfg($path.$filename);
-			foreach($cfg as $obj)
+			foreach($cfg->childs as $obj)
 			{
 				_import_object_definition($id, $filename, $obj);
 			}
@@ -34,6 +34,27 @@ function import_package($path, $packageName)
 					if (strlen($partModule) < 1)
 						continue;
 					db_insert("INSERT INTO PluginPartModule(Plugin, Name) VALUES (".e($pluginId).", ".e($partModule).");");
+				}
+			}
+		}
+		else if ($ext == '.craft')
+		{
+			$crafts = db_query("SELECT * FROM Craft WHERE Package = ".e($id)." AND Filename = ".e($filename));
+			if (count($crafts) < 1)
+			{
+				$craft = parse_cfg($path.$filename);
+				$craftId = db_insert("INSERT INTO Craft(Package, Name, Description, Filename) VALUES (".e($id).", ".e($craft->data['ship']).", ".e($craft->data['description']).", ".e($filename).");");
+				foreach($craft->childs as $part)
+				{
+					if ($part->type == "PART")
+					{
+						$part = $part->data['part'];
+						$part = substr($part, 0, strrpos($part, "_"));
+						$part = str_replace(".", "_", $part);
+						db_insert("INSERT INTO CraftPart(Craft, Name) VALUES (".e($craftId).", ".e($part).");");
+					}else{
+						echo "Unknown thing in craft file: ".$part->type;
+					}
 				}
 			}
 		}

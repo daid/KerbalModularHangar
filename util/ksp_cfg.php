@@ -4,7 +4,12 @@ function parse_cfg($filename)
 {
 	$fd = fopen($filename, "r");
 	$ret = array();
-	$obj = false;
+	$obj = new stdClass();
+	$obj->type = "ROOT";
+	$obj->data = array();
+	$obj->parent = false;
+	$obj->childs = array();
+	$root = $obj;
 	$lastLine = "";
 	while(($line = fgets($fd)) !== false)
 	{
@@ -44,16 +49,11 @@ function parse_cfg($filename)
 			$newobj->data = array();
 			$newobj->parent = $obj;
 			$newobj->childs = array();
-			if ($obj === false)
-			{
-				$ret[] = $newobj;
-			}else{
-				$obj->childs[] = $newobj;
-			}
+			$obj->childs[] = $newobj;
 			$obj = $newobj;
 		}else if ($line == "}")
 		{
-			if ($obj === false)
+			if ($obj->parent === false)
 				echo "Warning: Close object with no object open...\n".$filename."\n";
 			else
 				$obj = $obj->parent;
@@ -62,6 +62,6 @@ function parse_cfg($filename)
 		}
 	}
 	fclose($fd);
-	return $ret;
+	return $root;
 }
 ?>

@@ -81,4 +81,18 @@ $table['Plugin'] = 'INT INDEX';
 $table['Name'] = 'STRING | INDEX';
 $databaseScheme['PluginPartModule'] = $table;
 
+$table = array();
+$table['ID'] = 'ID';
+$table['Package'] = 'INT INDEX';
+$table['Name'] = 'STRING';
+$table['Description'] = 'TEXT';
+$table['Filename'] = 'STRING';
+$databaseScheme['Craft'] = $table;
+
+$table = array();
+$table['ID'] = 'ID';
+$table['Craft'] = 'INT INDEX';
+$table['Name'] = 'STRING | INDEX';
+$databaseScheme['CraftPart'] = $table;
+
 ?>
